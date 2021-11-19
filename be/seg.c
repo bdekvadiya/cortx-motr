@@ -225,17 +225,30 @@ M0_INTERNAL int m0_be_seg_create(struct m0_be_seg *seg,
 				 m0_bcount_t size,
 				 void *addr)
 {
-	struct m0_be_seg_geom geom[] = {
-		[0] = {
-			.sg_size = size,
-			.sg_addr = addr,
-			.sg_offset = 0ULL,
-			.sg_id = seg->bs_id,
-			.sg_gen = seg->bs_gen = m0_time_now()
-		},
+	struct m0_be_seg_geom geom[2];
 
-		[1] = M0_BE_SEG_GEOM0,
-	};
+	M0_LOG(M0_ALWAYS, "EOS-24529: bs_id: %"PRIu64, seg->bs_id);
+	M0_LOG(M0_ALWAYS, "EOS-24529: size: %"PRIu64, size);
+	M0_LOG(M0_ALWAYS, "EOS-24529: offset: %"PRIu64, seg->bs_offset);
+	M0_LOG(M0_ALWAYS, "EOS-24529: Address: %p", seg->bs_addr);
+
+	if (seg->bs_id == 42) {
+		geom[0].sg_size = size;
+		geom[0].sg_addr = addr;
+		/* 128MB for LOG and 1MB for SEG0 */
+		geom[0].sg_offset = 1048576 + 134217728;
+		geom[0].sg_id = seg->bs_id;
+		geom[0].sg_gen = seg->bs_gen = m0_time_now();
+		geom[1] = M0_BE_SEG_GEOM0;
+	} else {
+		geom[0].sg_size = size;
+		geom[0].sg_addr = addr;
+		/* 128 MB for LOG */
+		geom[0].sg_offset = 134217728;
+		geom[0].sg_id = seg->bs_id;
+		geom[0].sg_gen = seg->bs_gen = m0_time_now();
+		geom[1] = M0_BE_SEG_GEOM0;
+	}
 
 	return m0_be_seg_create_multiple(seg->bs_stob, geom);
 }
