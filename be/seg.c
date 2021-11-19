@@ -350,8 +350,13 @@ M0_INTERNAL int m0_be_seg_open(struct m0_be_seg *seg)
 	if (hdr == NULL)
 		return M0_ERR(-ENOMEM);
 
-	rc = m0_be_io_single(seg->bs_stob, SIO_READ,
-			     hdr, M0_BE_SEG_HEADER_OFFSET, be_seg_hdr_size());
+	if (seg->bs_id == 41) {
+		rc = m0_be_io_single(seg->bs_stob, SIO_READ,
+			     	hdr, M0_BE_SEG_HEADER_OFFSET + 134217728, be_seg_hdr_size());
+	} else {
+		rc = m0_be_io_single(seg->bs_stob, SIO_READ,
+			     	hdr, M0_BE_SEG_HEADER_OFFSET + 1048576 + 134217728, be_seg_hdr_size());
+	}
 	if (rc != 0) {
 		m0_free(hdr);
 		return M0_ERR(rc);
