@@ -38,6 +38,7 @@
 #include "dix/cm/cp.h"
 #include "dix/cm/cm.h"
 #include "dix/cm/iter.h"
+#include <unistd.h>
 
 /**
   @page DIXCMDLD DIX copy machine DLD
@@ -557,6 +558,8 @@ M0_INTERNAL int m0_dix_cm_data_next(struct m0_cm *cm, struct m0_cm_cp *cp)
 				 cm->cm_quiesce ? "QUIESCE" : "ABORT");
 		return M0_RC(-ENODATA);
 	}
+
+        sleep(10);
 
 	if (!dcm->dcm_iter_inprogress) {
 		if (!dcm->dcm_cp_in_progress) {
